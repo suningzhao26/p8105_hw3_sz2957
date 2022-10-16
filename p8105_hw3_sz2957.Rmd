@@ -103,7 +103,7 @@ instacart %>%
 * The process begins with data import and updating variable names, using `read_csv` and `clean_names()`.
 * Then, I create a new variable called `weekdays` using `case_when()` to classify whether the days are in weekend or weekdays.
 * In the next step, I use `pivot_longer` to make it a longer table for accelerometer in different minutes, and then make `minutes` as numeric
-* Finally, I change the order of columns using `select` and arrange the dataset using `arrange`.
+* Finally, I change the order of columns using `fct_level`,`select` and arrange the dataset using `arrange`.
 
 ```{r}
 Accel_df =
@@ -122,10 +122,11 @@ Accel_df =
     values_to = "accelerometer"
   ) %>%
   mutate(
+    day = forcats::fct_relevel(day, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday","Saturday","Sunday"),
     minutes = as.numeric(minutes)
   ) %>% 
-  select(week, day_id, weekdays, day,everything()) %>% 
-  arrange(week, day_id, weekdays, day)
+  select(week, day_id, weekdays, day, everything()) %>% 
+  arrange(week, day)
 ```
 
 * In the dataset `Accel_df`, there are `r nrow(Accel_df)` observations and `r ncol(Accel_df)` variables. 
@@ -134,13 +135,17 @@ Accel_df =
 #### Traditional analyses of accelerometer data
 
 * To analyze the accelerometer data focusing on the total activity over the day, I used `group_by()` and summarize()` to generate a total activity for each day.
-* Then, I use `kable` in `knitr` to create the visualized table
+* Then, I use `pivot_wider` to generate a wider table to make it clearer, and use `kable` in `knitr` to create the visualized table
 
 ```{r}
 Accel_df %>% 
-  group_by(week,weekdays, day) %>% 
+  group_by(week,day) %>% 
   summarize(
     sum_accelerometer = sum(accelerometer, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(
+    names_from = "day",
+    values_from = "sum_accelerometer"
   ) %>% 
   knitr::kable(digits = 3)
 ```
