@@ -187,5 +187,12 @@ Accel_plot
 ```{r}
 library(p8105.datasets)
 data("ny_noaa")
+summary(ny_noaa)
 ```
+
+* In the original dataset `ny_noaa`, there are `r nrow(ny_noaa)` observations and `r ncol(ny_noaa)` variables. 
+* The key variables' names are `r names(ny_noaa)`.
+* There are lots of missing data in the dataset. There are `r sum(is.na(ny_noaa$prcp))` missing value in `prcp`, `r sum(is.na(ny_noaa$snow))` missing value in `snow`, `r sum(is.na(ny_noaa$snwd))` missing value in `snwd`. 
+* Besides, due to the missing value in tmax and tmin, those two variables are character variables and might need some change.
+
 
