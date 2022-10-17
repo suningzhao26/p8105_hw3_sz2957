@@ -195,4 +195,31 @@ summary(ny_noaa)
 * There are lots of missing data in the dataset. There are `r sum(is.na(ny_noaa$prcp))` missing value in `prcp`, `r sum(is.na(ny_noaa$snow))` missing value in `snow`, `r sum(is.na(ny_noaa$snwd))` missing value in `snwd`. 
 * Besides, due to the missing value in tmax and tmin, those two variables are character variables and might need some change.
 
+#### Data cleaning
 
+* I create a new dataframe called `ny_noaa_tidy` to clean the data.
+* First, I use `clean_names()` to make sure every variables are with same format. 
+* Then, I use `separate()` to separate `date` into `year`, `month`, and `day`.
+* Next, I convert `tmin` and `tmax` into numeric variables, and translate `tmin`, `tmax` into "degrees C"; `prcp` into "mm".
+* finally, I count the `snow` variable to get the most commonly observed values.
+```{r}
+ny_noaa_tidy =
+  ny_noaa %>% 
+  janitor::clean_names() %>% 
+  separate(col = date, into = c('year','month','day'), sep = "-" , convert = TRUE) %>% 
+  mutate(
+     month = month.name[month],
+     prcp = prcp / 10,
+     tmax = as.numeric(tmax),
+     tmin = as.numeric(tmin),
+     tmax = tmax / 10,
+     tmin = tmin / 10
+  ) 
+  
+
+ny_noaa_tidy %>%
+  count(snow, name = "n_obs") %>% 
+  arrange(desc(n_obs))
+```
+
+* The result shows that "0" is the most commonly observed values, because in most of months and days, there is no snow in New York state. This aligns with our common sense. 
