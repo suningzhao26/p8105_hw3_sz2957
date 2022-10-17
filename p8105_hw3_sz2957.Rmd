@@ -171,7 +171,7 @@ Accel_plot =
     labels = c("0:00", "3:00", "6:00", "9:00", "12:00", "15:00", "18:00", "21:00", "24:00")
   )
 
-ggsave("./Results/weather_plot.pdf", Accel_plot, width = 8, height = 5)
+ggsave("./Results/Accel_plot.pdf", Accel_plot, width = 8, height = 5)
 
 Accel_plot
 ```
@@ -223,3 +223,29 @@ ny_noaa_tidy %>%
 ```
 
 * The result shows that "0" is the most commonly observed values, because in most of months and days, there is no snow in New York state. This aligns with our common sense. 
+
+#### Two-panel plot
+
+```{r}
+ny_noaa_max_temp_plot = 
+  ny_noaa_tidy %>% 
+  filter(month == c("January","July")) %>% 
+  group_by(id, year, month) %>% 
+  summarize(
+    tmax_average = mean(tmax, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = year, y = tmax_average, color = id)) +
+  geom_point(alpha = .5) +
+  theme(legend.position = "none") +
+  facet_grid(. ~ month) +
+  labs(
+    title = "Average max temperature in January and in July for each station across years",
+    y = "Average max temperature (degree C)" ) 
+
+ggsave("./Results/ny_noaa_max_temp_plot.pdf", ny_noaa_max_temp_plot, width = 8, height = 5)
+
+ny_noaa_max_temp_plot
+```
+
+
+
