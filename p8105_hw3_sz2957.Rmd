@@ -235,7 +235,7 @@ ny_noaa_max_temp_plot =
     tmax_average = mean(tmax, na.rm = TRUE)
   ) %>% 
   ggplot(aes(x = year, y = tmax_average, color = id)) +
-  geom_point(alpha = .5) +
+  geom_line(alpha = .5) +
   theme(legend.position = "none") +
   facet_grid(. ~ month) +
   labs(
@@ -253,16 +253,33 @@ ny_noaa_max_temp_plot
 ny_noaa_tmax_vs_tmin_plot = 
   ny_noaa_tidy %>% 
   group_by(id, year, month) %>% 
-  ggplot(aes(x = tmin, y = tmax, color = id)) +
-  geom_point(alpha = .5) +
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex() +
+  theme(legend.position = "bottom") +
+  labs(
+    title = "tmax vs tmin",
+    x = "Minimum temperature (degree C)",
+    y = "Maximum temperature (degree C)" ) 
+
+ny_noaa_snowfall_plot = 
+  ny_noaa_tidy %>%
+  filter(snow < 100) %>% 
+  filter(snow > 0) %>% 
+  mutate(
+    year = as.factor(year)
+  ) %>% 
+  ggplot(aes(x = snow, y = year)) +
+  geom_density_ridges(scale = .85) +
   theme(legend.position = "none") +
   labs(
-    title = "Average max temperature in January and in July for each station across years",
-    y = "Average max temperature (degree C)" ) 
+    title = "Distribution of snowfall by year",
+    x = "Snowfall(mm)" ) 
 
 ggsave("./Results/ny_noaa_tmax_vs_tmin_plot.pdf", ny_noaa_tmax_vs_tmin_plot, width = 8, height = 5)
 
-ny_noaa_tmax_vs_tmin_plot
+ggsave("./Results/ny_noaa_snowfall_plot.pdf", ny_noaa_snowfall_plot, width = 8, height = 5)
+
+ny_noaa_tmax_vs_tmin_plot + ny_noaa_snowfall_plot
 ```
 
 
