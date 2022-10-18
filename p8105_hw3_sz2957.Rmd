@@ -227,7 +227,7 @@ ny_noaa_tidy %>%
 
 #### Two-panel plot: the average max temperature 
 
-* I use `ggplot()` to generate a visualization for average max temperature for Jan. and July. After carefully thinking, I feel that `geom_line()` is more appropriate. The x-axis is `year` and the y-axis is `tmax_average`, which is the mean for `tmax` for each station.
+* I use `ggplot()` to generate a visualization for average max temperature for Jan. and July. After carefully thinking, I feel that `geom_line()` combined with `geom_point()` is more appropriate. The x-axis is `year` and the y-axis is `tmax_average`, which is the mean for `tmax` for each station.
 
 ```{r}
 ny_noaa_max_temp_plot = 
@@ -239,6 +239,7 @@ ny_noaa_max_temp_plot =
   ) %>% 
   ggplot(aes(x = year, y = tmax_average, color = id)) +
   geom_line(alpha = .5) +
+  geom_point(alpha = .25) +
   theme(legend.position = "none") +
   facet_grid(. ~ month) +
   labs(
