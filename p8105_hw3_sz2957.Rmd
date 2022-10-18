@@ -102,7 +102,7 @@ instacart %>%
 
 * The process begins with data import and updating variable names, using `read_csv` and `clean_names()`.
 * Then, I create a new variable called `weekdays` using `case_when()` to classify whether the days are in weekend or weekdays.
-* In the next step, I use `pivot_longer` to make it a longer table for accelerometer in different minutes, and then make `minutes` as numeric
+* In the next step, I use `pivot_longer` to make it a longer table for activity level in different minutes, and then make `minutes` as numeric
 * Finally, I change the order of columns using `fct_level`,`select` and arrange the dataset using `arrange`.
 
 ```{r}
@@ -165,7 +165,8 @@ Accel_plot =
   labs(
     title = "Inspection activity over the course of the day",
     x = "Time of the day",
-    y = "Activity counts" ) +
+    y = "Activity counts",
+    caption = "Data from accel.csv dataset") +
   scale_x_continuous(
     breaks = c(0, 180, 360, 540, 720, 900, 1080, 1260, 1440),
     labels = c("0:00", "3:00", "6:00", "9:00", "12:00", "15:00", "18:00", "21:00", "24:00")
@@ -226,6 +227,8 @@ ny_noaa_tidy %>%
 
 #### Two-panel plot: the average max temperature 
 
+* I use `ggplot()` to generate a visualization for average max temperature for Jan. and July. After carefully thinking, I feel that `geom_line()` is more appropriate. The x-axis is `year` and the y-axis is `tmax_average`, which is the mean for `tmax` for each station.
+
 ```{r}
 ny_noaa_max_temp_plot = 
   ny_noaa_tidy %>% 
@@ -240,14 +243,24 @@ ny_noaa_max_temp_plot =
   facet_grid(. ~ month) +
   labs(
     title = "Average max temperature in January and in July for each station across years",
-    y = "Average max temperature (degree C)" ) 
+    y = "Average max temperature (degree C)",
+    caption = "Data from ny_noaa dataset") 
 
 ggsave("./Results/ny_noaa_max_temp_plot.pdf", ny_noaa_max_temp_plot, width = 8, height = 5)
 
 ny_noaa_max_temp_plot
 ```
 
+* According to the result, we can know that:
+  1. The average temperature in July is significantly higher than the temperature in January.
+  2. All the station in NY shares with a very close witness of temperature, except for several lower outliers in July and higher outlier in January. The outliers might be those stations in different place of NY state, for example, places in the upper state may have extremely lower temperature in July and January. 
+  3. It can be also seen that there has some trends for temperature. The weather will be higher in this year, but will be lower in next year, because the overall plot tends to be fluctuating.
+
 #### Two-panel plot: `tmax` vs `tmin` for the full dataset; Distribution of snowfall values greater than 0 and less than 100 separately by year
+
+* I use `ggplot()` to generate a visualization for two plots, and use `patchwork` to combine two graphs into a two-panel plot.
+* For the first plot, I choose to use `geom_hex()` for visualization. The x-axis is `tmin` and the y-axis is `tmax`.
+* For the second plot, I choose to use `geom_density_ridges()` for visualization and categorize the ridges by year. The x-axis is `snow` and the y-axis is `year`.
 
 ```{r}
 ny_noaa_tmax_vs_tmin_plot = 
@@ -259,7 +272,8 @@ ny_noaa_tmax_vs_tmin_plot =
   labs(
     title = "tmax vs tmin",
     x = "Minimum temperature (degree C)",
-    y = "Maximum temperature (degree C)" ) 
+    y = "Maximum temperature (degree C)" ,
+    caption = "Data from ny_noaa dataset") 
 
 ny_noaa_snowfall_plot = 
   ny_noaa_tidy %>%
@@ -273,7 +287,8 @@ ny_noaa_snowfall_plot =
   theme(legend.position = "none") +
   labs(
     title = "Distribution of snowfall by year",
-    x = "Snowfall(mm)" ) 
+    x = "Snowfall(mm)" ,
+    caption = "Data from ny_noaa dataset") 
 
 ggsave("./Results/ny_noaa_tmax_vs_tmin_plot.pdf", ny_noaa_tmax_vs_tmin_plot, width = 8, height = 5)
 
@@ -282,4 +297,5 @@ ggsave("./Results/ny_noaa_snowfall_plot.pdf", ny_noaa_snowfall_plot, width = 8, 
 ny_noaa_tmax_vs_tmin_plot + ny_noaa_snowfall_plot
 ```
 
-
+* From the graph we can know that most data points of maximum temperature are within 0 to 30 degree, while most data points of minimum temperature are within 0 to 15 degree.
+* The distribution of snowfall by year does not change significantly, but still noticed that it seems more rare in recent years to have snowfall over 50mm.
